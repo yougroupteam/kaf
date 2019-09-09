@@ -7,6 +7,7 @@ require (
 	github.com/Shopify/sarama v1.23.1
 	github.com/avast/retry-go v2.4.1+incompatible
 	github.com/birdayz/kaf v0.1.22
+	github.com/fatih/color v1.7.0 // indirect
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b // indirect
 	github.com/golang/protobuf v1.3.2
 	github.com/hokaccha/go-prettyjson v0.0.0-20190818114111-108c894c2c0e
