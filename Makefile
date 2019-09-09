@@ -1,6 +1,6 @@
 build:
 	GO111MODULE=on go build -ldflags "-w -s" ./cmd/kaf
 install:
-	GO111MODULE=on go install -ldflags "-w -s" ./cmd/kaf
+	go install -mod vendor
 release:
 	rm -rf dist/ && goreleaser

@@ -2,7 +2,7 @@
 github.com/DataDog/zstd
 # github.com/Landoop/schema-registry v0.0.0-20190327143759-50a5701c1891
 github.com/Landoop/schema-registry
-# github.com/Shopify/sarama v1.23.0
+# github.com/Shopify/sarama v1.23.1
 github.com/Shopify/sarama
 # github.com/alecthomas/gometalinter v2.0.11+incompatible
 github.com/alecthomas/gometalinter
@@ -10,6 +10,9 @@ github.com/alecthomas/gometalinter
 github.com/alecthomas/units
 # github.com/avast/retry-go v2.4.1+incompatible
 github.com/avast/retry-go
+# github.com/birdayz/kaf v0.1.22
+github.com/birdayz/kaf
+github.com/birdayz/kaf/avro
 # github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e
 github.com/chzyer/readline
 # github.com/client9/misspell v0.3.4
@@ -27,7 +30,7 @@ github.com/eapache/queue
 github.com/fatih/color
 # github.com/golang/lint v0.0.0-20181026193005-c67002cb31c3
 github.com/golang/lint/golint
-# github.com/golang/protobuf v1.3.1
+# github.com/golang/protobuf v1.3.2
 github.com/golang/protobuf/jsonpb
 github.com/golang/protobuf/proto
 github.com/golang/protobuf/ptypes/struct
@@ -46,19 +49,20 @@ github.com/google/shlex
 github.com/gordonklaus/ineffassign
 # github.com/hashicorp/go-uuid v1.0.1
 github.com/hashicorp/go-uuid
-# github.com/hokaccha/go-prettyjson v0.0.0-20180920040306-f579f869bbfe
+# github.com/hokaccha/go-prettyjson v0.0.0-20190818114111-108c894c2c0e
 github.com/hokaccha/go-prettyjson
 # github.com/inconshreveable/mousetrap v1.0.0
 github.com/inconshreveable/mousetrap
 # github.com/jcmturner/gofork v1.0.0
 github.com/jcmturner/gofork/encoding/asn1
 github.com/jcmturner/gofork/x/crypto/pbkdf2
-# github.com/jhump/protoreflect v1.4.4
+# github.com/jhump/protoreflect v1.5.0
 github.com/jhump/protoreflect/desc
 github.com/jhump/protoreflect/desc/protoparse
 github.com/jhump/protoreflect/dynamic
 github.com/jhump/protoreflect/desc/internal
 github.com/jhump/protoreflect/internal
+github.com/jhump/protoreflect/codec
 # github.com/juju/ansiterm v0.0.0-20180109212912-720a0952cc2a
 github.com/juju/ansiterm
 github.com/juju/ansiterm/tabwriter
@@ -110,7 +114,7 @@ golang.org/x/text/transform
 golang.org/x/tools/go/ast/astutil
 golang.org/x/tools/go/gcexportdata
 golang.org/x/tools/go/internal/gcimporter
-# google.golang.org/genproto v0.0.0-20170818100345-ee236bd376b0
+# google.golang.org/genproto v0.0.0-20170818010345-ee236bd376b0
 google.golang.org/genproto/protobuf/api
 google.golang.org/genproto/protobuf/field_mask
 google.golang.org/genproto/protobuf/ptype
