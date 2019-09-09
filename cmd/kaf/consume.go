@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 	"sync"
 	"text/tabwriter"
@@ -14,13 +15,15 @@ import (
 	"github.com/birdayz/kaf/avro"
 	"github.com/birdayz/kaf/pkg/proto"
 	"github.com/golang/protobuf/jsonpb"
-	prettyjson "github.com/hokaccha/go-prettyjson"
-	colorable "github.com/mattn/go-colorable"
+	"github.com/hokaccha/go-prettyjson"
+	"github.com/mattn/go-colorable"
 	"github.com/spf13/cobra"
 )
 
 var (
-	offsetFlag  string
+	offsetNum   int
+	latest      bool
+	beginning   bool
 	raw         bool
 	follow      bool
 	schemaCache *avro.SchemaCache
@@ -33,7 +36,10 @@ var (
 
 func init() {
 	rootCmd.AddCommand(consumeCmd)
-	consumeCmd.Flags().StringVar(&offsetFlag, "offset", "oldest", "Offset to start consuming. Possible values: oldest, newest.")
+	consumeCmd.Flags().BoolVar(&latest, "latest", false, "latest offset")
+	consumeCmd.Flags().BoolVar(&beginning, "beginning", true, "beginning offset")
+	consumeCmd.Flags().IntVar(&offsetNum, "offset", 0, "Offset to start consuming, can use specific number, or '-5','-10'... to indicate latest-5, latest-10")
+
 	consumeCmd.Flags().BoolVar(&raw, "raw", false, "Print raw output of messages, without key or prettified JSON")
 	consumeCmd.Flags().BoolVarP(&follow, "follow", "f", false, "Shorthand to start consuming with offset HEAD-1 on each partition. Overrides --offset flag")
 	consumeCmd.Flags().StringSliceVar(&protoFiles, "proto-include", []string{}, "Path to proto files")
@@ -67,6 +73,57 @@ func getAvailableOffsetsRetry(
 	}
 }
 
+func calculateOffset(topic string, partitions []int32) int64 {
+	offs := make([]int64, 0)
+	client := getClient()
+	wg := sync.WaitGroup{}
+
+	for partition := range partitions {
+
+		wg.Add(1)
+
+		// calling too fast
+		time.Sleep(100 * time.Millisecond)
+
+		go func(partition int32) {
+
+			req := &sarama.OffsetRequest{
+				Version: int16(1),
+			}
+			req.AddBlock(topic, partition, int64(-1), int32(0))
+			broker, err := client.Leader(topic, partition)
+			if err != nil {
+				errorExit("Unable to get leader: %v\n", err)
+			}
+
+			offsets, err := broker.GetAvailableOffsets(req)
+			if err != nil {
+				errorExit("Unable to get available offsets: %v\n", err)
+			}
+
+			partitionOffset := offsets.GetBlock(topic, partition).Offset
+
+			offs = append(offs, partitionOffset)
+
+			wg.Done()
+		}(int32(partition))
+	}
+
+	wg.Wait()
+
+	// sort it
+	sort.Slice(offs, func(i, j int) bool {
+		return offs[i] > offs[j]
+	})
+
+	calculated := offs[0] + int64(offsetNum)
+	if calculated < 0 {
+		return 0
+	} else {
+		return calculated
+	}
+}
+
 const (
 	offsetsRetry       = 500 * time.Millisecond
 	configProtobufType = "protobuf.type"
@@ -79,19 +136,7 @@ var consumeCmd = &cobra.Command{
 	PreRun: setupProtoDescriptorRegistry,
 	Run: func(cmd *cobra.Command, args []string) {
 		var offset int64
-		switch offsetFlag {
-		case "oldest":
-			offset = sarama.OffsetOldest
-		case "newest":
-			offset = sarama.OffsetNewest
-		default:
-			// TODO: normally we would parse this to int64 but it's
-			// difficult as we can have multiple partitions. need to
-			// find a way to give offsets from CLI with a good
-			// syntax.
-			offset = sarama.OffsetNewest
-		}
-		topic := args[0]
+
 		client := getClient()
 
 		consumer, err := sarama.NewConsumerFromClient(client)
@@ -99,9 +144,23 @@ var consumeCmd = &cobra.Command{
 			errorExit("Unable to create consumer from client: %v\n", err)
 		}
 
+		topic := args[0]
+
 		partitions, err := consumer.Partitions(topic)
 		if err != nil {
 			errorExit("Unable to get partitions: %v\n", err)
+		}
+
+		if offsetNum > 0 {
+			offset = int64(offsetNum)
+		} else if offsetNum < 0 {
+			offset = calculateOffset(topic, partitions)
+		} else if latest {
+			offset = sarama.OffsetNewest
+		} else if beginning {
+			offset = sarama.OffsetOldest
+		} else {
+			offset = sarama.OffsetOldest
 		}
 
 		schemaCache = getSchemaCache()
@@ -126,6 +185,12 @@ var consumeCmd = &cobra.Command{
 				if err != nil {
 					errorExit("Unable to get available offsets: %v\n", err)
 				}
+				partitionOffset := offsets.GetBlock(topic, partition).Offset
+				if partitionOffset < offset {
+					wg.Done()
+					return
+				}
+
 				followOffset := offsets.GetBlock(topic, partition).Offset - 1
 
 				if follow && followOffset > 0 {
