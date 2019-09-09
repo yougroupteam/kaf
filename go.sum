@@ -16,6 +16,8 @@ github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf/go.mod h1:ybxpYRF
 github.com/armon/consul-api v0.0.0-20180202201655-eb2c6b5be1b6/go.mod h1:grANhF5doyWs3UAsr3K4I6qtAmlQcZDesFNEHPZAzj8=
 github.com/avast/retry-go v2.4.1+incompatible h1:WMHc0mwoz20UVmBYK89mUB/KFRlxO0p+s+sgpmJMviY=
 github.com/avast/retry-go v2.4.1+incompatible/go.mod h1:XtSnn+n/sHqQIpZ10K1qAevBhOOCWBLXXy3hyiqqBrY=
+github.com/birdayz/kaf v0.1.22 h1:J66aYlPtSANKW75c5nDyNM6ugFDuJuXWABpL+8jPfCc=
+github.com/birdayz/kaf v0.1.22/go.mod h1:o33cNfxOPMcCnViqRQLs/3jb/ufcXWebT9WUPk0jKr4=
 github.com/chzyer/logex v1.1.10 h1:Swpa1K6QvQznwJRcfTfQJmTE72DqScAa40E+fbHEXEE=
 github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWRnGsAI=
 github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e h1:fY5BOSpyZCqRo5OhCuC+XN+r/bBCmeuuJtjz+bCNIf8=

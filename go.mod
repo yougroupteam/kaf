@@ -1,4 +1,4 @@
-module github.com/yougroupteam/kaf
+module github.com/birdayz/kaf
 
 go 1.12
 
